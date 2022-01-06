@@ -2,6 +2,7 @@ import './App.css';
 import { MenuBar } from "./Components/MenuBar";
 import WebcamSetup from "./Components/WebcamSetup";
 import VideoCapture from './Components/VideoCapture';
+import { Route, Routes } from 'react-router-dom';
 
 
 export default function App() {
@@ -10,10 +11,12 @@ export default function App() {
         <MenuBar />
         <div className="hero h-96 bg-gradient-to-br from-primary to-secondary text-primary-content">
             {/* <WebcamSetup /> */}
-            
         </div>
 
-        <VideoCapture />
+        <Routes>
+          <Route path='/' element={<VideoCapture />} />
+          <Route path='/photos' element={<div>PHOTOS</div>} />
+        </Routes>
       </div> 
   );
 }

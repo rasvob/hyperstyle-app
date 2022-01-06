@@ -22,10 +22,7 @@ const rootElement = document.getElementById("root");
 render(
   <RecoilRoot>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/about" element={<div></div>} />
-      </Routes>
+      <App />
     </BrowserRouter>
     </RecoilRoot>,
   rootElement

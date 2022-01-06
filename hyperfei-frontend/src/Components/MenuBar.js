@@ -6,7 +6,7 @@ export const MenuBar = () => {
     const [videoState, setVideoCaptureState] = useRecoilState(videoCaptureState);
 
     return (
-    <header className="z-50 navbar w-full bg-white px-7 text-primary-content fixed text-base-content flex justify-between items-center">
+    <header className="z-50 navbar w-full bg-white px-7 fixed text-base-content flex justify-between items-center">
             <div className="inline-block mb-1">
                 <span className="text-3xl text-primary font-semibold">
                     hyper

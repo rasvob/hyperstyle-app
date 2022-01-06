@@ -1,14 +1,15 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import Webcam from "react-webcam";
-import { videoCaptureState } from "../DAL/DataStore";
-import { useRecoilCallback, useRecoilState } from "recoil";
-import * as faceapi from 'face-api.js';
-import { TinyFaceDetectorOptions } from "face-api.js";
+import { videoCaptureState, framesCapturedState } from "../DAL/DataStore";
+import { atom, useRecoilCallback, useRecoilState } from "recoil";
+import { Link } from "react-router-dom";
 
 const videoConstraints = {
     facingMode: "user",
-    frameRate: { ideal: 25 }
+    frameRate: { ideal: 30 }
 };
+
+const MAX_FRAMES = 15;
 
 const ImagePreview = ({vidState}) => {
     let filteredState = vidState;
@@ -24,93 +25,49 @@ const ImagePreview = ({vidState}) => {
 };
 
 const VideoCapture = () => {
-    const [videoState, setVideoCaptureState] = useRecoilState(videoCaptureState);
-    const [currentImage, setCurrentImage] = useState(null);
-    const currentImgRef = useRef(null);
+    const [videoState, setVideoState] = useRecoilState(videoCaptureState);
+    const [framesCaptured, setFramesCaptured] = useRecoilState(framesCapturedState);
+    const [captureRunning, setCaptureRunning] = useState(false);
+    const [captureLoopId, setCaptureLoopId] = useState(null);
     const webcamRef = useRef(null);
-    const showImg = useRef(null);
-    const mediaRecorderRef = React.useRef(null);
-    let previousDetection = null;
 
     const capture = useRecoilCallback(({snapshot, set}) => async () => {
             const imageSrc = webcamRef.current.getScreenshot();
             const st = snapshot.getLoadable(videoCaptureState).contents;
+            const frames = snapshot.getLoadable(framesCapturedState).contents;
             set(videoCaptureState, [...st, imageSrc]);
-            setCurrentImage(imageSrc);
-            return imageSrc;
+            set(framesCapturedState, frames+1);
         },
         [webcamRef]
     );
 
-    const capture2 = useRecoilCallback(({snapshot, set}) => async () => {
-        const imageSrc = webcamRef.current.getScreenshot();
-        const st = snapshot.getLoadable(videoCaptureState).contents;
-        set(videoCaptureState, [...st, imageSrc]);
-        setCurrentImage(imageSrc);
-    },
-    [webcamRef]
-    );
-
-    const modifyCanvas = (e) => {
-        const cnvs = webcamRef.current.getCanvas();
-        const ctx = cnvs.getContext("2d");
-
-        ctx.beginPath();
-        ctx.rect(20, 20, 150, 100);
-        ctx.stroke();
-
+    const resetCapture = (e) => {
+        setCaptureRunning(false);
+        setFramesCaptured(0);
+        setVideoState([]);
     };
 
-    const detectFace = async () => {
-        // const detection = await faceapi.tinyFaceDetector(currentImgRef.current);
-        // const cnvs = currentImgRef.current;
-        const cnvs = webcamRef.current.getCanvas();
-        const ctx = cnvs.getContext("2d");
-
-        ctx.beginPath();
-        ctx.rect(20, 20, 150, 100);
-        ctx.stroke();
-        const detection = await faceapi.detectSingleFace(webcamRef.current.video);//.withAgeAndGender().withFaceExpressions();
-        if (detection) {
-            faceapi.draw.drawDetections(ctx, detection);
-        }
-    };
-
-    const showCurrentImage = (e) => {
-        e.preventDefault();
-        const cnvs = currentImgRef.current;
-        const ctx = cnvs.getContext("2d");
-        ctx.drawImage(showImg.current, 0, 0);
-    };
-
-    useEffect(async () => {
-        await faceapi.loadTinyFaceDetectorModel('/models');
-        console.info("Models loaded");
-
+    useEffect(() => {
         const timeoutHandle = async () => {
-            const frame = await capture();
-            const cnvs = currentImgRef.current;
-            const ctx = cnvs.getContext("2d");
-            const detection = await faceapi.tinyFaceDetector(cnvs, new TinyFaceDetectorOptions({scoreThreshold: 0.2}));
-            ctx.drawImage(showImg.current, 0, 0);
-            if (detection) {
-                faceapi.draw.drawDetections(ctx, detection);
-            }
+            await capture();
         };
-        const tId = setInterval(timeoutHandle, 40);
 
-        // mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-        //     mimeType: "video/webm"
-        //   });
+        if (captureRunning) {
+            const tId = setInterval(timeoutHandle, 500);
+            setCaptureLoopId(tId);
 
-        // mediaRecorderRef.current.ondataavailable = handleWebcamFrame;
-        // // mediaRecorderRef.current.start(1000);
-
-        // console.log(mediaRecorderRef.current);
+        } else if ((!captureRunning) && captureLoopId) {
+            clearInterval(captureLoopId);
+        }
         
-        return () => {clearInterval(tId)};
-    }, [])
+        return () => {clearInterval(captureLoopId)};
+    }, [captureRunning]);
 
+    useEffect(() => {
+        if (framesCaptured >= MAX_FRAMES) {
+            setCaptureRunning(false);
+        }
+    }, [framesCaptured]);
 
     return (
             <div className="container my-10 mx-auto min-h-screen">
@@ -118,16 +75,10 @@ const VideoCapture = () => {
                     
                     <div className="card-body bg-white">
                     <div className="card-title text-primary font-bold">Video capture</div>
-                    <div className="md:flex">
-                        <div className="flex-grow">
-                            <div className="flex gap-1">
-                                <button className="btn" onClick={capture}>Capture photo</button>
-                                <button className="btn" onClick={detectFace}>Detect face</button>
-                                <button className="btn" onClick={showCurrentImage}>Show face</button>
-                                <button className="btn" onClick={modifyCanvas}>Mod face</button>
-                            </div>
-                        </div>
 
+                    <progress className="progress progress-primary my-4" value={framesCaptured} max={MAX_FRAMES}></progress> 
+
+                    <div>
                         <div>
                             <Webcam
                             audio={false}
@@ -135,12 +86,14 @@ const VideoCapture = () => {
                             screenshotFormat="image/jpeg"
                             width={768}
                             videoConstraints={videoConstraints}
-                            className="rounded-md invisible z-0 h-0"
+                            className="rounded-md"
                             />
 
-                        <canvas ref={currentImgRef} width={768} height={576} className="z-10">
-                            <img ref={showImg} src={currentImage} width={512} height={256} />
-                        </canvas>
+                            <button className="btn" onClick={(e) => setCaptureRunning(true)}>Start capture</button>
+                            <button className="btn" onClick={(e) => setCaptureRunning(false)}>Stop capture</button>
+                            <button className="btn" onClick={resetCapture}>Reset capture</button>
+                            <Link className="btn" to='/photos' >Next</Link>
+                            <p>{framesCaptured}</p>
                         </div>
                     </div>
 
