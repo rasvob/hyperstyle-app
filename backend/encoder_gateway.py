@@ -7,6 +7,7 @@ import pprint
 import numpy as np
 from PIL import Image
 import torch
+from torch.jit import Error
 import torchvision.transforms as transforms
 import cv2
 
@@ -49,6 +50,12 @@ class FaceEncoderGateway:
         if not os.path.exists(self.restyle_e4e_path):
             raise ValueError("ReStyle-e4e model was unable to be loaded correctly!")
 
+        if not os.path.exists("shape_predictor_68_face_landmarks.dat"):
+            print('Downloading files for aligning face image...')
+            os.system('wget http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2')
+            os.system('bzip2 -dk shape_predictor_68_face_landmarks.dat.bz2')
+            print('Done.')
+
         self.net, self.opts = load_model(self.hyperstyle_path, update_opts={"w_encoder_checkpoint_path": self.w_encoder_path})
         print('Model successfully loaded!')
         self.fine_tuned_generators = {k:load_generator(self.generator_paths[k]) for k in self.generator_types}
@@ -62,7 +69,11 @@ class FaceEncoderGateway:
         self.opts.resize_outputs = False
 
     def transform_image(self, image_path:str, selected_generator:GeneratorTypes = GeneratorTypes.TOONIFY):
-        input_image = run_alignment(image_path)
+        input_image = None
+        try:
+            input_image = run_alignment(image_path)
+        except:
+            return None
         input_image.resize((256, 256))
         img_transforms = transforms.Compose([transforms.Resize((256, 256)), 
                                         transforms.ToTensor(),

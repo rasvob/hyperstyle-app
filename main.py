@@ -1,8 +1,13 @@
 from typing import Optional
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
+from numpy.lib.type_check import imag
+from pydantic import BaseModel
 
 import os
+import base64
+import uuid
 import io
 CODE_DIR = './'
 import time
@@ -89,7 +94,25 @@ from backend.encoder_gateway import FaceEncoderGateway, GeneratorTypes
 
 #--- FAST API APP ---
 
+class ImageModel(BaseModel):
+    imgDataBase64: str
+
 app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 face_encoder = FaceEncoderGateway()
 
@@ -100,6 +123,10 @@ def startup_event():
 @app.get("/")
 def ping():
     return {"Ping": "Pong"}
+
+@app.get("/active")
+def ping():
+    return {"active": True}
 
 # @app.get("/image")
 # def get_image():
@@ -164,6 +191,31 @@ async def create_upload_file(file: UploadFile = File(...)):
     
     return {"filename": file.filename}
 
+@app.post("/uploadimage")
+async def create_upload_file(img: ImageModel):
+    with open(f"./notebooks/images/upload.jpeg", "wb") as f:
+        f.write(base64.b64decode(img.imgDataBase64.replace('data:image/jpeg;base64,', '')))
+
+    return img
+
+@app.post("/transform")
+async def create_upload_file(img: ImageModel):
+    tmp_filename = uuid.uuid4().hex
+    tmp_path = f"./notebooks/images/{tmp_filename}.jpeg"
+
+    with open(tmp_path, "wb") as f:
+        f.write(base64.b64decode(img.imgDataBase64.replace('data:image/jpeg;base64,', '')))
+
+    images = {}
+    for style in GeneratorTypes:
+        image = face_encoder.transform_image(tmp_path, style)
+        if image is None:
+            os.remove(tmp_path)
+            raise HTTPException(status_code=500, detail="Failed to detect face")
+        images[str(style)] = base64.b64encode(image)
+
+    return images
+
 # @app.post("/hyper")
 # def get_hyper_image(file: UploadFile = File(...)):
 #     content = file.file.read()
@@ -213,7 +265,3 @@ async def create_upload_file(file: UploadFile = File(...)):
 #     # res = Image.fromarray(res)
 
 #     return StreamingResponse(io.BytesIO(image.tobytes()), media_type="image/jpg")
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}

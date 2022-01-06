@@ -6,10 +6,12 @@ import { Link } from "react-router-dom";
 
 const videoConstraints = {
     facingMode: "user",
-    frameRate: { ideal: 30 }
+    frameRate: { ideal: 30 },
+    width: 512,
+    height: 512,
 };
 
-const MAX_FRAMES = 15;
+const MAX_FRAMES = 10;
 
 const ImagePreview = ({vidState}) => {
     let filteredState = vidState;
@@ -19,7 +21,7 @@ const ImagePreview = ({vidState}) => {
 
     return (
         filteredState.map((x, i) => (
-            <img src={x} key={`img_bottom_${i}`} className="img aspect-square rounded-md" />
+            <img src={x} key={`img_bottom_${i}`} className="img aspect-square rounded-md w-24" />
         ))
     );
 };
@@ -71,7 +73,7 @@ const VideoCapture = () => {
 
     return (
             <div className="container my-10 mx-auto min-h-screen">
-                <div className="card shadow-md -mt-64 text-black">
+                <div className="card shadow-md -mt-24 text-black">
                     
                     <div className="card-body bg-white">
                     <div className="card-title text-primary font-bold">Video capture</div>
@@ -84,7 +86,8 @@ const VideoCapture = () => {
                             audio={false}
                             ref={webcamRef}
                             screenshotFormat="image/jpeg"
-                            width={768}
+                            width={512}
+                            height={512}
                             videoConstraints={videoConstraints}
                             className="rounded-md"
                             />
@@ -102,9 +105,9 @@ const VideoCapture = () => {
                     </div>
                     
                     <h1>Preview images</h1>
-                    <ul className="md:columns-6">
+                    {/* <ul className="md:columns-6">
                         <ImagePreview vidState={videoState} />
-                    </ul>
+                    </ul> */}
                     
                     
                     </div>

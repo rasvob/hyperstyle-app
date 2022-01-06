@@ -25,7 +25,7 @@ const PhotoGrid = () => {
         try {
             const res2 = await postSelectedImage(selectedImage.data);
             console.log(res2);
-            setResImg(res2);
+            setResImg(`data:image/jpeg;base64,${res2}`);
         } catch (error) {
             console.log(error);
         }
@@ -49,6 +49,10 @@ const PhotoGrid = () => {
             <div>
                 <button className="btn btn-primary my-4" onClick={apiCall}>API Call</button>
             </div>
+            
+            {
+                
+            }
 
             <img src={resImg} className="w-60 h-60" />
         </div>
