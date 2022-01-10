@@ -1,5 +1,5 @@
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "http://127.0.0.1:9000";
 const TEST_URL = `${API_URL}/active`
 const POST_IMAGE_URL = `${API_URL}/transform`
 
@@ -15,15 +15,14 @@ export function postSelectedImage(base64Data) {
           'Content-Type': 'application/json'
         }
       };
+
     return fetch(POST_IMAGE_URL, options).then(res => {
       if (res.status >= 400 && res.status < 600) {
-        if (res.status == 500) {
-          console.log(res);
+        if (res.status === 500) {
           throw new Error("Unable to detect face");
         }
         throw new Error("Bad response from server");
       }
       return res.json();
-    // }).then(res => URL.createObjectURL(res));
-    }).then(res => console.log(res));
+    });
 }

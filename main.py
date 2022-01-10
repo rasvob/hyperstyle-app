@@ -202,9 +202,10 @@ async def create_upload_file(img: ImageModel):
 async def create_upload_file(img: ImageModel):
     tmp_filename = uuid.uuid4().hex
     tmp_path = f"./notebooks/images/{tmp_filename}.jpeg"
+    base64prefix = 'data:image/jpeg;base64,'
 
     with open(tmp_path, "wb") as f:
-        f.write(base64.b64decode(img.imgDataBase64.replace('data:image/jpeg;base64,', '')))
+        f.write(base64.b64decode(img.imgDataBase64.replace(base64prefix, '')))
 
     images = {}
     for style in GeneratorTypes:
@@ -212,8 +213,9 @@ async def create_upload_file(img: ImageModel):
         if image is None:
             os.remove(tmp_path)
             raise HTTPException(status_code=500, detail="Failed to detect face")
-        images[str(style)] = base64.b64encode(image)
+        images[str(style)] = f"{base64prefix}{str(base64.b64encode(image).decode('utf-8'))}"
 
+    os.remove(tmp_path)
     return images
 
 # @app.post("/hyper")

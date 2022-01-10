@@ -21,7 +21,7 @@ class GeneratorTypes(Enum):
     TOONIFY = 1
     PIXAR = 2
     SKETCH = 3
-    DISNEY_PRINESS = 4
+    DISNEY_PRINCESS = 4
 
 class FaceEncoderGateway:
     def __init__(self) -> None:
@@ -86,7 +86,7 @@ class FaceEncoderGateway:
             fine_tuned_generator = self.fine_tuned_generators[self.generator_types[1]]
         elif selected_generator == GeneratorTypes.SKETCH:
             fine_tuned_generator = self.fine_tuned_generators[self.generator_types[2]]
-        elif selected_generator == GeneratorTypes.DISNEY_PRINESS:
+        elif selected_generator == GeneratorTypes.DISNEY_PRINCESS:
             fine_tuned_generator = self.fine_tuned_generators[self.generator_types[3]]
         else:
             raise ValueError(f"Invalid generator type")
