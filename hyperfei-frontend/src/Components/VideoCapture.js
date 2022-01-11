@@ -39,7 +39,7 @@ const VideoCapture = () => {
 
     const resetClicked = () => {
         resetCapture();
-        toast.error('You may start over');
+        toast.error('We may start over 😪');
     };
 
     const startCapture = () => {
@@ -48,6 +48,13 @@ const VideoCapture = () => {
             icon: '😉',
           });
     };
+
+    useEffect(() => {
+        if (framesCaptured >= MAX_FRAMES && captureRunning) {
+            setCaptureRunning(false);
+            toast.success("OK, Everyting set. You may proceed to the next step 🙂")
+        }
+    }, [framesCaptured]);
 
     useEffect(() => {
         resetCapture();
@@ -68,12 +75,7 @@ const VideoCapture = () => {
         return () => {clearInterval(timerRef.current)};
     }, [captureRunning]);
 
-    useEffect(() => {
-        if (framesCaptured >= MAX_FRAMES) {
-            setCaptureRunning(false);
-            toast.success("OK, Everyting set. You may proceed to the next step 🙂")
-        }
-    }, [framesCaptured]);
+    
 
     return (
             <div className="container mx-auto mt-5">
@@ -97,7 +99,7 @@ const VideoCapture = () => {
                             <button disabled={framesCaptured > 0 || captureRunning ? 'disabled' : ''} className="btn btn-secondary" onClick={startCapture}>Start capture</button>
                             <button disabled={framesCaptured < MAX_FRAMES ? 'disabled' : ''} className="btn btn-error" onClick={resetClicked}>Reset capture</button>
                         </div>
-                        <Link disabled={framesCaptured < MAX_FRAMES ? 'disabled' : ''} className="btn btn-primary justify-end" to='/photos' >Select selfie</Link>
+                        <Link disabled={framesCaptured < MAX_FRAMES ? 'disabled' : ''} className={`btn btn-primary justify-end ${framesCaptured >= MAX_FRAMES ? 'animate__animated' : ''} animate__hearthbeat animate__slow animate__infinite`} to='/photos' >Select selfie</Link>
                     </div>
                     
             </div>

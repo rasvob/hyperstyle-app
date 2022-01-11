@@ -13,7 +13,7 @@ export const framesCapturedState = atom({
 export const selectedImageState = atom({
     key: 'selectedImageState', 
     default: {
-        index: 0,
+        index: null,
         data: null
     }
 });
