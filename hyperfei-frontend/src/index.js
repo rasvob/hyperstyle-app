@@ -16,6 +16,7 @@ import {
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Toaster } from "react-hot-toast";
 
 
 const rootElement = document.getElementById("root");

@@ -1,5 +1,5 @@
 import { useState, useRef, forwardRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { getActiveRoute, postSelectedImage, postSelectedImageFake, postSelectedImageFail } from "../DAL/APIGateway";
 import { videoCaptureState, selectedImageState } from "../DAL/DataStore";
@@ -77,6 +77,8 @@ const PhotoGrid = () => {
     const [resImgPixar, setResImgPixar] = useState(null);
     const [resImgSketch, setResImgSketch] = useState(null);
     const [resImgDisney, setResImgDisney] = useState(null);
+
+    const navigate = useNavigate();
     
     const selectImage = (e, idx) => {
         e.preventDefault();
@@ -99,8 +101,6 @@ const PhotoGrid = () => {
         }
     }
 
-    console.log(videoState);
-
     return (
         <div className="container mx-auto">
             <div className="grid grid-cols-5 gap-6 justify-items-center my-6">
@@ -118,6 +118,7 @@ const PhotoGrid = () => {
             <Link className="btn btn-error" to="/">Go back</Link>
             <div>
                 <button className="btn btn-primary my-4" onClick={apiCall}>API Call</button>
+                <button className="btn btn-primary my-4" onClick={(e) => {navigate('/results')}}>Results</button>
             </div>
 
             <Example ></Example>

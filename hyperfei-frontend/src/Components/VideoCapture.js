@@ -3,6 +3,7 @@ import Webcam from "react-webcam";
 import { videoCaptureState, framesCapturedState } from "../DAL/DataStore";
 import { atom, useRecoilCallback, useRecoilState } from "recoil";
 import { Link } from "react-router-dom";
+import toast from 'react-hot-toast'
 
 const videoConstraints = {
     facingMode: "user",
@@ -13,25 +14,12 @@ const videoConstraints = {
 
 const MAX_FRAMES = 10;
 
-const ImagePreview = ({vidState}) => {
-    let filteredState = vidState;
-    if (vidState.length >= 6) {
-        filteredState = vidState.slice(vidState.length - 6);
-    }
-
-    return (
-        filteredState.map((x, i) => (
-            <img src={x} key={`img_bottom_${i}`} className="img aspect-square rounded-md w-24" />
-        ))
-    );
-};
-
 const VideoCapture = () => {
     const [videoState, setVideoState] = useRecoilState(videoCaptureState);
     const [framesCaptured, setFramesCaptured] = useRecoilState(framesCapturedState);
     const [captureRunning, setCaptureRunning] = useState(false);
-    const [captureLoopId, setCaptureLoopId] = useState(null);
     const webcamRef = useRef(null);
+    const timerRef = useRef(null);
 
     const capture = useRecoilCallback(({snapshot, set}) => async () => {
             const imageSrc = webcamRef.current.getScreenshot();
@@ -43,11 +31,27 @@ const VideoCapture = () => {
         [webcamRef]
     );
 
-    const resetCapture = (e) => {
+    const resetCapture = () => {
         setCaptureRunning(false);
         setFramesCaptured(0);
         setVideoState([]);
     };
+
+    const resetClicked = () => {
+        resetCapture();
+        toast.error('You may start over');
+    };
+
+    const startCapture = () => {
+        setCaptureRunning(true);
+        toast("Hey! Smile a little!", {
+            icon: '😉',
+          });
+    };
+
+    useEffect(() => {
+        resetCapture();
+    }, []);
 
     useEffect(() => {
         const timeoutHandle = async () => {
@@ -55,63 +59,47 @@ const VideoCapture = () => {
         };
 
         if (captureRunning) {
-            const tId = setInterval(timeoutHandle, 500);
-            setCaptureLoopId(tId);
+            timerRef.current = setInterval(timeoutHandle, 500);
 
-        } else if ((!captureRunning) && captureLoopId) {
-            clearInterval(captureLoopId);
+        } else if ((!captureRunning) && timerRef.current) {
+            clearInterval(timerRef.current);
         }
         
-        return () => {clearInterval(captureLoopId)};
+        return () => {clearInterval(timerRef.current)};
     }, [captureRunning]);
 
     useEffect(() => {
         if (framesCaptured >= MAX_FRAMES) {
             setCaptureRunning(false);
+            toast.success("OK, Everyting set. You may proceed to the next step 🙂")
         }
     }, [framesCaptured]);
 
     return (
-            <div className="container my-10 mx-auto min-h-screen">
-                <div className="card shadow-md -mt-24 text-black">
-                    
-                    <div className="card-body bg-white">
-                    <div className="card-title text-primary font-bold">Video capture</div>
-
+            <div className="container mx-auto mt-5">
+                    <h1 className="font-semibold text-primary text-xl">Currently {framesCaptured} out of {MAX_FRAMES} selfies captured</h1>
                     <progress className="progress progress-primary my-4" value={framesCaptured} max={MAX_FRAMES}></progress> 
-
-                    <div>
-                        <div>
-                            <Webcam
-                            audio={false}
-                            ref={webcamRef}
-                            screenshotFormat="image/jpeg"
-                            width={512}
-                            height={512}
-                            videoConstraints={videoConstraints}
-                            className="rounded-md"
-                            />
-
-                            <button className="btn" onClick={(e) => setCaptureRunning(true)}>Start capture</button>
-                            <button className="btn" onClick={(e) => setCaptureRunning(false)}>Stop capture</button>
-                            <button className="btn" onClick={resetCapture}>Reset capture</button>
-                            <Link className="btn" to='/photos' >Next</Link>
-                            <p>{framesCaptured}</p>
-                        </div>
-                    </div>
-
-                    <div>
+                    <div className="mx-auto flex justify-center">
+                        <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        width={512}
+                        height={512}
+                        videoConstraints={videoConstraints}
+                        className="rounded-md"
+                        />
                         
                     </div>
-                    
-                    <h1>Preview images</h1>
-                    {/* <ul className="md:columns-6">
-                        <ImagePreview vidState={videoState} />
-                    </ul> */}
-                    
-                    
+
+                    <div className="my-5 flex mx-auto justify-between" style={{width: '512px'}}>
+                        <div className="flex gap-3">
+                            <button disabled={framesCaptured > 0 || captureRunning ? 'disabled' : ''} className="btn btn-secondary" onClick={startCapture}>Start capture</button>
+                            <button disabled={framesCaptured < MAX_FRAMES ? 'disabled' : ''} className="btn btn-error" onClick={resetClicked}>Reset capture</button>
+                        </div>
+                        <Link disabled={framesCaptured < MAX_FRAMES ? 'disabled' : ''} className="btn btn-primary justify-end" to='/photos' >Select selfie</Link>
                     </div>
-                </div> 
+                    
             </div>
     );
 };
