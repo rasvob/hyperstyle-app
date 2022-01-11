@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --vsb-color: #00A499;
+}
+
+.color-vsb {
+    color: var(--vsb-color);
+}
+
+.bg-vsb {
+    background-color: var(--vsb-color);
+}
+
+.border-vsb {
+    border-color: var(--vsb-color);
+}

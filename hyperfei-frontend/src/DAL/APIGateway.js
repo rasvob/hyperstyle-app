@@ -26,3 +26,25 @@ export function postSelectedImage(base64Data) {
       return res.json();
     });
 }
+
+
+export function postSelectedImageFake(base64Data) {
+  return new Promise(() => {
+    return {
+      'GeneratorTypes.TOONIFY': base64Data,
+      'GeneratorTypes.PIXAR': base64Data,
+      'GeneratorTypes.SKETCH': base64Data,
+      'GeneratorTypes.DISNEY_PRINCESS': base64Data
+    };
+  });
+}
+
+export function postSelectedImageFail(base64Data) {
+  return new Promise(() => {
+    return {
+      'status': 500
+    };
+  }).then(t => {
+    throw new Error("Unable to detect face");
+  });
+}
