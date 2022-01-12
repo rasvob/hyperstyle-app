@@ -19,9 +19,9 @@ export function postSelectedImage(base64Data) {
     return fetch(POST_IMAGE_URL, options).then(res => {
       if (res.status >= 400 && res.status < 600) {
         if (res.status === 500) {
-          throw new Error("Unable to detect face");
+          throw new Error("Whoops! We are unable to detect face, please try again.", { cause: 'Face' });
         }
-        throw new Error("Bad response from server");
+        throw new Error("Whoops! Bad response from server. This is bad. Admin needed.", { cause: 'Server' });
       }
       return res.json();
     });
