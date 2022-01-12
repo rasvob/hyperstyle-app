@@ -4,6 +4,7 @@ import { videoCaptureState, framesCapturedState } from "../DAL/DataStore";
 import { atom, useRecoilCallback, useRecoilState } from "recoil";
 import { Link } from "react-router-dom";
 import toast from 'react-hot-toast'
+import ContentLoader, { Instagram } from 'react-content-loader'
 
 const videoConstraints = {
     facingMode: "user",
@@ -18,6 +19,7 @@ const VideoCapture = () => {
     const [videoState, setVideoState] = useRecoilState(videoCaptureState);
     const [framesCaptured, setFramesCaptured] = useRecoilState(framesCapturedState);
     const [captureRunning, setCaptureRunning] = useState(false);
+    const [isWebcameraReady, setIsWebcameraReady] = useState(false);
     const webcamRef = useRef(null);
     const timerRef = useRef(null);
 
@@ -40,6 +42,10 @@ const VideoCapture = () => {
     const resetClicked = () => {
         resetCapture();
         toast.error('We may start over 😪');
+    };
+
+    const onMediaObtained = (e) => {
+        setIsWebcameraReady(true);
     };
 
     const startCapture = () => {
@@ -81,26 +87,35 @@ const VideoCapture = () => {
             <div className="container mx-auto mt-5">
                     <h1 className="font-semibold text-primary text-xl">Currently {framesCaptured} out of {MAX_FRAMES} selfies captured</h1>
                     <progress className="progress progress-primary my-4" value={framesCaptured} max={MAX_FRAMES}></progress> 
-                    <div className="mx-auto flex justify-center">
-                        <Webcam
-                        audio={false}
-                        ref={webcamRef}
-                        screenshotFormat="image/jpeg"
-                        width={512}
-                        height={512}
-                        videoConstraints={videoConstraints}
-                        className="rounded-md"
-                        />
-                        
-                    </div>
+                    <div className="">
+                        <div className="mx-auto flex justify-center">
+                            <Webcam
+                                audio={false}
+                                ref={webcamRef}
+                                screenshotFormat="image/jpeg"
+                                width={512}
+                                height={512}
+                                videoConstraints={videoConstraints}
+                                className="rounded-md"
+                                onUserMedia={onMediaObtained}
+                            />
+                        </div>
 
-                    <div className="my-5 flex mx-auto justify-between" style={{width: '512px'}}>
+                        {!isWebcameraReady &&
+                            <div className="-mt-64 mx-auto flex justify-center inset-0" style={{width: '512px', height: '512px'}}>
+                                <Instagram width={512} height={512} />
+                            </div>
+                        }
+                    </div>
+                    
+                    <div className="my-5 flex mx-auto justify-between" style={{width: '512px'}} >
                         <div className="flex gap-3">
-                            <button disabled={framesCaptured > 0 || captureRunning ? 'disabled' : ''} className="btn btn-secondary" onClick={startCapture}>Start capture</button>
+                            <button disabled={framesCaptured > 0 || captureRunning || !isWebcameraReady ? 'disabled' : ''} className="btn btn-secondary" onClick={startCapture}>Start capture</button>
                             <button disabled={framesCaptured < MAX_FRAMES ? 'disabled' : ''} className="btn btn-error" onClick={resetClicked}>Reset capture</button>
                         </div>
                         <Link disabled={framesCaptured < MAX_FRAMES ? 'disabled' : ''} className={`btn btn-primary justify-end ${framesCaptured >= MAX_FRAMES ? 'animate__animated' : ''} animate__hearthbeat animate__slow animate__infinite`} to='/photos' >Select selfie</Link>
                     </div>
+
                     
             </div>
     );

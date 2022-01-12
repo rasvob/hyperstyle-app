@@ -17,3 +17,12 @@
 .border-vsb {
     border-color: var(--vsb-color);
 }
+
+@keyframes skeleton {
+    50% {
+        opacity: .5;
+    }
+}
+.animate-skeleton {
+    animation: skeleton 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

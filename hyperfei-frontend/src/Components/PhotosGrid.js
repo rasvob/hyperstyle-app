@@ -35,6 +35,8 @@ const PhotoGrid = () => {
             setResImgPixar(res2['GeneratorTypes.PIXAR']);
             setResImgSketch(res2['GeneratorTypes.SKETCH']);
             setResImgDisney(res2['GeneratorTypes.DISNEY_PRINCESS']);
+
+            console.log(res2);
         } catch (error) {
             console.log(error);
         }
@@ -64,13 +66,13 @@ const PhotoGrid = () => {
                 <button className="btn btn-primary my-4" onClick={(e) => {navigate('/results')}}>Results</button>
             </div>
 
-{/* 
+
             <div className="flex-row flex gap-4">
                 <img src={resImgToonify} className="w-60 h-60" />
                 <img src={resImgPixar} className="w-60 h-60" />
                 <img src={resImgSketch} className="w-60 h-60" />
                 <img src={resImgDisney} className="w-60 h-60" />
-            </div> */}
+            </div>
             
         </div>
     );
