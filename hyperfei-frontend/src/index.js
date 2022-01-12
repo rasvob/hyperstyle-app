@@ -1,22 +1,10 @@
 import React from 'react';
 import { render } from "react-dom";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Router
-} from "react-router-dom";
-import {
-  RecoilRoot,
-  atom,
-  selector,
-  useRecoilState,
-  useRecoilValue,
-} from 'recoil';
+import { BrowserRouter } from "react-router-dom";
+import { RecoilRoot} from 'recoil';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { Toaster } from "react-hot-toast";
 
 
 const rootElement = document.getElementById("root");

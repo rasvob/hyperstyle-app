@@ -1,9 +1,8 @@
 import './App.css';
 import 'animate.css'
 import { MenuBar } from "./Components/MenuBar";
-import WebcamSetup from "./Components/WebcamSetup";
 import VideoCapture from './Components/VideoCapture';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import PhotoGrid from './Components/PhotosGrid';
 import HeroPage from './Components/HeroPage';
 import Footer from './Components/Footer';

@@ -10,10 +10,25 @@ export const framesCapturedState = atom({
     default: 0
 });
 
+export const lastSelectedWebcamState = atom({
+    key: 'lastSelectedWebcamState', 
+    default: null
+});
+
 export const selectedImageState = atom({
     key: 'selectedImageState', 
     default: {
         index: null,
         data: null
+    }
+});
+
+export const styleTransferedImagesState = atom({
+    key: 'styleTransferedImagesState', 
+    default: {
+        Toonify: null,
+        Pixar: null,
+        Sketch: null,
+        Disney: null,
     }
 });
