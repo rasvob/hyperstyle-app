@@ -1,8 +1,8 @@
 import { useReactToPrint } from 'react-to-print';
 import { useState, useRef, forwardRef, useEffect } from "react";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useRecoilCallback, useRecoilState, useResetRecoilState } from "recoil";
 import { postSelectedImage } from "../DAL/APIGateway";
-import { videoCaptureState, selectedImageState, styleTransferedImagesState } from "../DAL/DataStore";
+import { videoCaptureState, selectedImageState, styleTransferedImagesState, selectedPrintStyleState } from "../DAL/DataStore";
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
@@ -14,18 +14,46 @@ const PrintButton = () => {
     const handlePrint = useReactToPrint({
       content: () => componentRef.current,
     });
-  
+
+    const [selectedPrintMode, setSelectedPrintMode] = useState(null);
+    const [styleTransferedImages, ] = useRecoilState(styleTransferedImagesState);
+
+    const areImagesAvailable = () => {
+        return styleTransferedImages.Pixar !== null;
+    };
+
+    const printPage = (e, mode) => {
+        e.preventDefault();
+        setSelectedPrintMode(mode);
+    };
+
+    useEffect(() => {
+        if (selectedPrintMode === null) {
+            return;
+        }
+
+        handlePrint();
+    }, [selectedPrintMode]);
+
     return (
       <div>
         <div className="hidden">
-            <ComponentToPrint ref={componentRef} />
+            <ComponentToPrint ref={componentRef} mode={selectedPrintMode}/>
         </div>
         
-        <button className="btn btn-primary" onClick={handlePrint}>
+        <div className={`dropdown dropdown-left dropdown-start ${areImagesAvailable() ? 'dropdown-hover' : ''}`}>
+        <button className="btn btn-primary" disabled={areImagesAvailable()  ? '' : 'disabled'} tabIndex="0" onClick={(e) => printPage(e, 'NO_ORIGINAL')}>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
         </svg>
         </button>
+        <ul tabIndex="0" className="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-60">
+        <li>
+            <a href="blan.k" role="menuitem" onClick={(e) => printPage(e, 'NO_SKETCH')}>w/o sketch</a>
+            <a href="blan.k" role="menuitem" onClick={(e) => printPage(e, 'NO_DISNEY')}>w/o disney</a>
+        </li> 
+        </ul>
+        </div>
       </div>
     );
   };
@@ -33,10 +61,12 @@ const PrintButton = () => {
 
 
 export default function ResultsScreen() {
-    const [selectedImage, setSelectedImage] = useRecoilState(selectedImageState);
+    const [selectedImage, ] = useRecoilState(selectedImageState);
     const [styleTransferedImages, setStyleTransferedImages] = useRecoilState(styleTransferedImagesState);
     const resetStyleTransferedImages = useResetRecoilState(styleTransferedImagesState);
     const navigate = useNavigate();
+
+    
 
     const apiCall = async () => {
         try {

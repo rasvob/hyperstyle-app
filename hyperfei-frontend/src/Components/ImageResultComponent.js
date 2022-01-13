@@ -4,7 +4,7 @@ const ImageResultComponent = ({image, title}) => {
     return (
         <div>
             <div className="indicator">
-            <div className="indicator-item badge sm:indicator-center badge-primary">{title}</div>
+            <div className="indicator-item badge indicator-center badge-primary">{title}</div>
 
             {
                 image 

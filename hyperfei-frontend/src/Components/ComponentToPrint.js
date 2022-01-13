@@ -2,7 +2,18 @@ import { useRecoilState } from "recoil";
 import { videoCaptureState, styleTransferedImagesState } from "../DAL/DataStore";
 import QRCode  from "qrcode.react";
 import { forwardRef } from "react";
-import { selectedImageState } from "../DAL/DataStore";
+import { selectedImageState, selectedPrintStyleState } from "../DAL/DataStore";
+
+const ImagePrint = ({source, title}) => {
+    return (
+        <div className="indicator">
+            <div className="indicator-item badge indicator-center badge-primary bg-vsb border-vsb">{title}</div>
+            <div className="border-b-4 border-vsb">
+                <img alt="" src={source} className="img" />
+            </div>
+        </div>
+    );
+}
 
 const ComponentToPrint = forwardRef((props, ref) => {
     const [styleTransferedImages, setStyleTransferedImages] = useRecoilState(styleTransferedImagesState);
@@ -15,29 +26,55 @@ const ComponentToPrint = forwardRef((props, ref) => {
         </div>
         <div className="flex-grow ">
             <div className="grid grid-cols-2 gap-6 justify-items-center container w-2/3 mx-auto">
-                {/* {
-                    videoState.slice(0, 4).map((x, i) => (
-                        <div className="border-b-4 border-vsb">
-                            <img alt="" src={x} key={`img_gallery_${i}`} className="img" />
-                        </div>
-                    ))
-                } */}
-
-                <div className="border-b-4 border-vsb">
-                    <img alt="" src={styleTransferedImages.Pixar} key={`img_gallery_pixar`} className="img" />
+                {/* <div className="border-b-4 border-vsb">
+                    <img alt="" src={styleTransferedImages.Pixar} className="img" />
                 </div>
 
                 <div className="border-b-4 border-vsb">
-                    <img alt="" src={styleTransferedImages.Toonify} key={`img_gallery_pixar`} className="img" />    
+                    <img alt="" src={styleTransferedImages.Toonify} className="img" />    
                 </div>
 
                 <div className="border-b-4 border-vsb">
-                    <img alt="" src={styleTransferedImages.Sketch} key={`img_gallery_pixar`} className="img" />
+                    <img alt="" src={styleTransferedImages.Sketch} className="img" />
                 </div>
 
                 <div className="border-b-4 border-vsb">
-                    <img alt="" src={styleTransferedImages.Disney} key={`img_gallery_disney`} className="img" />
-                </div>
+                    <img alt="" src={styleTransferedImages.Disney} className="img" />
+                </div> */}
+
+                {props.mode === 'NO_ORIGINAL' &&
+                    <>
+                    <ImagePrint source={styleTransferedImages.Pixar} title={'Pixar'} />
+                    <ImagePrint source={styleTransferedImages.Toonify} title={'Toonify'} />
+                    <ImagePrint source={styleTransferedImages.Sketch} title={'Sketch'} />
+                    <ImagePrint source={styleTransferedImages.Disney} title={'Disney'} />
+                    </>
+                }
+
+                {props.mode === 'NO_SKETCH' &&
+                    <>
+                    <ImagePrint source={selectedImage.data} title={'Original'} />
+                    <ImagePrint source={styleTransferedImages.Pixar} title={'Pixar'} />
+                    <ImagePrint source={styleTransferedImages.Toonify} title={'Toonify'} />
+                    <ImagePrint source={styleTransferedImages.Disney} title={'Disney'} />
+                    </>
+                }
+
+                {props.mode === 'NO_DISNEY' &&
+                    <>
+                    <ImagePrint source={selectedImage.data} title={'Original'} />
+                    <ImagePrint source={styleTransferedImages.Pixar} title={'Pixar'} />
+                    <ImagePrint source={styleTransferedImages.Toonify} title={'Toonify'} />
+                    <ImagePrint source={styleTransferedImages.Sketch} title={'Sketch'} />
+                    </>
+                }
+
+                {/* <>
+                <ImagePrint source={selectedImage.data} title={'Original'} />
+                <ImagePrint source={styleTransferedImages.Pixar} title={'Pixar'} />
+                <ImagePrint source={styleTransferedImages.Toonify} title={'Toonify'} />
+                <ImagePrint source={styleTransferedImages.Sketch} title={'Sketch'} />
+                </> */}
             </div>
 
             <div className="bg-vsb my-5">

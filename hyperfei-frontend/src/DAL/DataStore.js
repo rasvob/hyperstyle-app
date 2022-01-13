@@ -32,3 +32,8 @@ export const styleTransferedImagesState = atom({
         Disney: null,
     }
 });
+
+export const selectedPrintStyleState = atom({
+    key: 'selectedPrintStyleState', 
+    default: 'NO_ORIGINAL'
+});
