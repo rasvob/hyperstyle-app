@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "animate.css": "^4.1.1",
     "daisyui": "^1.21.0",
+    "dotenv": "^11.0.0",
     "face-api.js": "^0.22.2",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.2",
