@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import Webcam from "react-webcam";
 import { videoCaptureState, framesCapturedState, styleTransferedImagesState, lastSelectedWebcamState } from "../DAL/DataStore";
 import { useRecoilCallback, useRecoilState, useResetRecoilState } from "recoil";
@@ -36,7 +36,7 @@ const VideoCapture = () => {
     );
 
     useEffect(() => {
-        setVideoConstraints({...videoConstraints, deviceId: lastWebcam});
+        setVideoConstraints(prev => {return {...prev, deviceId: lastWebcam}});
     }, [lastWebcam])
 
     const [videoConstraints, setVideoConstraints] = useState({
@@ -57,12 +57,12 @@ const VideoCapture = () => {
         [webcamRef]
     );
 
-    const resetCapture = () => {
+    const resetCapture = useCallback(() => {
         setCaptureRunning(false);
         setFramesCaptured(0);
         setVideoState([]);
         resetStyleTransferedImages();
-    };
+    }, [setCaptureRunning, setFramesCaptured, setVideoState, resetStyleTransferedImages]);
 
     const resetClicked = () => {
         resetCapture();
@@ -85,11 +85,11 @@ const VideoCapture = () => {
             setCaptureRunning(false);
             toast.success("OK, Everyting set. You may proceed to the next step 🙂")
         }
-    }, [framesCaptured]);
+    }, [framesCaptured, captureRunning]);
 
     useEffect(() => {
         resetCapture();
-    }, []);
+    }, [resetCapture]);
 
     useEffect(() => {
         const timeoutHandle = async () => {
@@ -104,7 +104,7 @@ const VideoCapture = () => {
         }
         
         return () => {clearInterval(timerRef.current)};
-    }, [captureRunning]);
+    }, [captureRunning, capture]);
 
     
 
@@ -122,6 +122,7 @@ const VideoCapture = () => {
                                 height={512}
                                 videoConstraints={videoConstraints}
                                 className="rounded-md"
+                                mirrored={true}
                                 onUserMedia={onMediaObtained}
                             />
                         </div>

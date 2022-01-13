@@ -50,7 +50,10 @@ export default function ResultsScreen() {
             });
         } catch (error) {
             console.error(error);
-            if (error.cause === 'Face') {
+            if (error instanceof TypeError) {
+                toast.error('Whoops! It seems that the REST API is down. Admin needed 😢');
+            }
+            else if (error.cause === 'Face') {
                 toast.error('Whoops! We are unable to detect face, please try again 😢');
             } else if (error.cause === 'Server') {
                 toast.error('Whoops! Bad response from server. This is bad. Admin needed 😢');
@@ -93,21 +96,22 @@ export default function ResultsScreen() {
                 <ImageResultComponent image={styleTransferedImages.Disney} title="Disney" />
             </div>
             
-            <div className='flex justify-between gap-6'>
-                <div>
-                <button onClick={goBack} className='btn btn-accent'>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                </button>
-                </div>
-                <div className='flex flex-row gap-3'>
-                <Link className='btn btn-warning gap-2' to='/capture'>
+            <div className='flex justify-between'>
+                <div className='gap-6 flex'>
+                    <button onClick={goBack} className='btn btn-accent'>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
-                    Start over
-                </Link>
+                    </button>
+
+                    <Link className='btn btn-warning gap-2' to='/capture'>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Start over
+                    </Link>
+                </div>
+                <div className=''>
                 <PrintButton />
                 </div>
             </div>
