@@ -3,3 +3,4 @@ pretrained_models/
 __pycache__/
 .ipynb_checkpoints/
 shape_predictor_68*
+certs/
