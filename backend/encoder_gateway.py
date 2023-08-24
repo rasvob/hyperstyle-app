@@ -70,6 +70,10 @@ class FaceEncoderGateway:
 
     def transform_image(self, image_path:str, selected_generator:GeneratorTypes = GeneratorTypes.TOONIFY):
         input_image = None
+        if os.path.exists(image_path):
+            print(f"Image path: {image_path}")
+        else:
+            print(f"Image path: {image_path} does not exist!")
         try:
             input_image = run_alignment(image_path)
         except:

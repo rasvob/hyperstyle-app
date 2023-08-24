@@ -4,3 +4,4 @@ __pycache__/
 .ipynb_checkpoints/
 shape_predictor_68*
 certs/
+easy-rsa/
