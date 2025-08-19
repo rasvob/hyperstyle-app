@@ -14,6 +14,7 @@ services:
               capabilities: [gpu]
 
   docker-react:
+      build: ./hyperfei-frontend
       image: svo0175/hyperfei
       depends_on:
         - docker-fastapi

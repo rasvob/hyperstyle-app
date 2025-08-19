@@ -79,26 +79,27 @@ const ComponentToPrint = forwardRef((props, ref) => {
 
             <div className="bg-vsb my-5">
                 <div className="mx-auto w-2/3 py-3">
-                    <h1 className="text-white text-4xl font-bold">Pojď studovat k nám!</h1>
+                    <h1 className="text-white text-2xl font-bold text-center">Jdi vstříc budoucnosti, studuj informatiku!</h1>
                     <div className="flex-row flex">
                         <div className="flex-1 mr-3">
-                            <p className="font-sans text-white text-sm text-opacity-80 my-3">Náš svět se skládá z jedniček a nul. Jednotvárný ale není, neboj. Každý den je jiný. Každá aplikace, každý web nebo operační systém si hodinu od hodiny žádají nové nápady.</p>
-                            <p className="font-sans text-white text-sm text-opacity-80 my-3">Mezi „softwary, hardwary, bity i byty“ jsme jako ryby ve vodě. A pokud je i tobě v tomhle světě dobře, u nás se určitě neztratíš. Naopak. Jestli toužíš po studiu, které má smysl, jsi na správné adrese.</p>
+                            <p className="font-sans font-bold text-white text-sm text-opacity-80 my-3">Svět jedniček a nul tvoří zítřek. Hodinu od hodiny jsou potřeba nové nápady, které posunou aplikace, weby, hry i celé systémy na další level. Jsi připraven překonávat hranice?</p>
+                            <p className="font-sans font-bold text-white text-sm text-opacity-80 my-3">Software, hardware, bity i bajty, to je naše. Máš to stejně? Tak je to jasné, pro informatiku už dávno žiješ. Začni u nás studovat a posuň svoje skills na další level. Studuj IT v Ostravě, v srdci techniky.</p>
                         </div>
                         <div className="flex items-center">
-                            <QRCode value="https://www.studujvostrave.cz/studijni-obory/informatika/" size={156}></QRCode>
+                            {/* <QRCode value="https://www.studujvostrave.cz/studijni-obory/informatika/" size={156}></QRCode> */}
+                            <img src='6CIja8x-qrcode.png' width="156" height="156"></img>
                         </div>
                     </div>
                 </div>
 
                 <div className="mx-auto w-2/3 flex justify-center">
-                    <h1 className="font-sans bg-white color-vsb text-xl font-bold uppercase p-3 mb-3">Nascanuj QR kód a dozvi se více!</h1>
+                    <h1 className="font-sans bg-white color-vsb text-lg font-bold uppercase p-3 mb-3">NASCANUJ QR KÓD A SLEDUJ NÁS NA INSTAGRAMU!</h1>
                 </div>
             </div>
         </div>
         
         <div className="ml-6 mb-4">
-            <img src='pdf_footer.png' className="w-2/3" alt="print-footer" />
+            <img src='pdf_footer_v2.png' className="w-2/3" alt="print-footer" />
         </div>
       </div>
     );
