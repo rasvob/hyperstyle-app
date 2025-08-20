@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 :root {
-    --vsb-color: #00A499;
+    /* --vsb-color: #00A499; */
+    --vsb-color: #05c3de;
 }
 
 .color-vsb {
@@ -17,6 +18,8 @@
 .border-vsb {
     border-color: var(--vsb-color);
 }
+
+
 
 @keyframes skeleton {
     50% {
